@@ -1,0 +1,3 @@
+# 2FA - TOTP Changelog
+
+## [Initial Version] - {PR_MERGE_DATE}
