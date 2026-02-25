@@ -19,12 +19,19 @@
       "name": "index",
       "title": "Copy TOTP Code",
       "description": "Copies the TOTP to clipboard",
-      "mode": "no-view"
+      "mode": "view"
+    },
+    {
+      "name": "list",
+      "title": "Lists the account",
+      "description": "List description",
+      "mode": "view"
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.104.6",
-    "@raycast/utils": "^1.17.0"
+    "@raycast/utils": "^1.17.0",
+    "otplib": "^13.3.0"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
