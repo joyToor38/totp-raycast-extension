@@ -17,8 +17,8 @@
   "commands": [
     {
       "name": "index",
-      "title": "Copy TOTP Code",
-      "description": "Copies the TOTP to clipboard",
+      "title": "Register TOTP URL",
+      "description": "Create a new Secret",
       "mode": "view"
     },
     {

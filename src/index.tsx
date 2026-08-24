@@ -1,33 +1,38 @@
-import { Action, ActionPanel, Form, showToast, Toast, useNavigation } from "@raycast/api";
+import { Action, ActionPanel, Form, popToRoot, showToast, Toast, LocalStorage, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
-import { generate } from "otplib";
+import { TOTPOptions } from "otplib";
 
 interface SignUpFormValues {
-  name: string;
+  totpURL?: string;
+  secret?: string;
+  issuer?:string;
+}
+
+function parseTotpURL(totpUrl: string): TOTPOptions {
+  const url = new URL(totpUrl);
+  if (url.protocol !== "otpauth:") {
+    throw Error;
+  }
+  const options = Object.fromEntries(url.searchParams);
+  return options;
 }
 
 export default function Command() {
+  const { push } = useNavigation();
   const { handleSubmit, itemProps } = useForm<SignUpFormValues>({
     async onSubmit(values) {
-      const {pop} = useNavigation()
-      const secret = await generate({secret: values.name})
-      console.log(secret)
+      const options = parseTotpURL(values.totpURL as string);
+      await LocalStorage.setItem(options.issuer as string, options.secret as string);
       showToast({
         style: Toast.Style.Success,
         title: "Yay!",
-        message: `${values.name} account created`,
+        message: `TOTP Registered Successfully`,
       });
-      pop()
+      popToRoot()
+      // push()
     },
     validation: {
-      name: FormValidation.Required,
-      // password: (value) => {
-      //   if (value && value.length < 8) {
-      //     return "Password must be at least 8 symbols";
-      //   } else if (!value) {
-      //     return "The item is required";
-      //   }
-      // },
+      totpURL: FormValidation.Required,
     },
   });
 
@@ -39,7 +44,14 @@ export default function Command() {
         </ActionPanel>
       }
     >
-      <Form.TextField title="Full Name" placeholder="Tim Cook" {...itemProps.name} />
+      <Form.TextField
+        title="TOTP URL"
+        placeholder="otpauth://totp/Test:demo?secret=TESTSECRET123&issuer=Test"
+        {...itemProps.totpURL}
+      />
+      <Form.Separator />
+      <Form.TextField title="Secret" placeholder="SDFJKDSJFSD" {...itemProps.secret} />
+      <Form.TextField title="Issuer" placeholder="github.com" {...itemProps.issuer} />
     </Form>
   );
 }
